@@ -1,6 +1,9 @@
 ---
-title = ""
-description = ""
-tags = []
-categories = []
+title: 'R & Python Working Together'
+author: 'Jesus Aguilar'
+date: '2021-05-09'
+slug: new
+categories: []
+tags: []
+description: ''
 ---
