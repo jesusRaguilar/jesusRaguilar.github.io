@@ -1,7 +1,18 @@
----
-title: "R & Python Working Together"
-output: html_document
-hidedate: false
-hiderelated: false
-hidediscus: false
----
++++
+title = "R & Python Working Together"
+date = '2021-05-09'
+description = ""
+tags = []
+categories = []
++++
+
+There's currently a hot debate in the world of coding today, and that is, which programming language is better, R or Python? Well something that can be agreed upon is that a bilingual person has a greater advantage over a monolingual speaker. So why not learn both if possible? Knowing both R and Python will give you a great advantage when trying to land a job. People often communicate using two languages and one can do exactly that with R and Python using the reticulate package. 
+```{r}
+library(reticulate)
+
+```
+
+```{python}
+
+```
+

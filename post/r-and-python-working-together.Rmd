@@ -7,3 +7,14 @@ categories: []
 tags: []
 description: ''
 ---
+
+## There's currently a hot debate in the world of coding today, and that is, which programming language is better, R or Python? 
+```{r}
+library(reticulate)
+
+```
+
+```{python}
+
+```
+
