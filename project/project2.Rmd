@@ -1,0 +1,192 @@
+---
+title: "Modeling, Testing, and Predicting"
+author: "Jesus Aguilar"
+date: "4/28/2021"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,fig.align="center",warning=FALSE,message=FALSE,fig.width=8, fig.height=5, linewidth=60)
+options(tibble.width = 100,width = 100)
+library(tidyverse)
+```
+
+The dataset "project1data" was derived from project 1 and we will be observing a subset of the original variables, a total of 9 variables and 1,200 observations. The dataset consists of student enrollment, revenue, expenditure, and minimum wage data across the 50 states of the U.S. through the years 1993-2016. There is also a 'Percent' variable which refers to the percent of expenditure contributed to instructional expenditure (educational purposes for grades K-12), and a 'wage_cat' variable which places the state in a low, intermediate, or high category based on that year's minimum wage. Low is anything below $7.25/hr, intermediate is greater than or equal to 
+$7.25/hr but less than or equal to 
+$8/hr, and high is anything greater than 
+$8/hr.
+```{r}
+project1data <- read.csv("project1data.csv")
+project1data <- project1data %>% select(2:5,9:10,13:15)
+glimpse(project1data)
+```
+--
+
+The number of tests performed below were a total of 10. I did 1 MANOVA, 3 ANOVAs, and 6 t-tests. Since I conducted 10 tests, the probability of at least one type I error is 0.401 (40.1%). After adjusting the significance level accordingly, to keep the type I error rate at 0.05, I set the significance level to 0.005 (0.5%). 
+
+The overall MANOVA was significant, so I performed one-way ANOVAs for each variable. The ANOVA for student enrollment was not significant, but for total revenue and instructional expenditure it was, signifying that at least one wage category differed. After performing t-tests for total revenue and instructional expenditure, a significant difference between high and low wage categories was observed, and between intermediate and low wage categories, for both total revenue and instructional expenditure. I did not find a significant difference in total revenue or instructional expenditure between high and intermediate categories, although their significance levels were borderline. These significant findings were found abiding by the corrected significance level of 0.005. 
+
+Some MANOVA assumptions are that the observations are independent, random samples, and that there exists a linear relationship among the dependent variables. The random sample, independent observations assumption is not met as it's known that each observation is specific to a state and year. The assumption of a linear relationship among dependent variables is harder to assess, but it's likely that this assumption was met. For example, one could assume that as student enrollment increases, instructional expenditure has to increase. One could also assume that if total revenue increases for a state, then instructional expenditure also increases.
+```{r}
+man <- manova(cbind(Enroll,Tot_Revenue,Inst_Expenditure)~wage_cat, data=project1data)
+summary(man)
+summary.aov(man)
+pairwise.t.test(project1data$Tot_Revenue,project1data$wage_cat,p.adj="none")
+pairwise.t.test(project1data$Inst_Expenditure,project1data$wage_cat,p.adj="none")
+```
+--
+
+Below we can see the distribution of total revenue by wage category. I decided to create a binary variable and merged the 'intermediate' and 'low' wage categories into one, classified as 'low', and made no changes to the 'high' wage category. 'High' is anything above $8/hr and 'low' is anything less than or equal to 
+$8/hr. 
+
+Next, the mean difference between the two categories was found to be 
+$6,970,418. Thereafter a randomization test was performed. The null hypothesis was that the true difference in average total revenue is 0 for 'low' vs. 'high' wage categories. The alternative hypothesis was that the true difference in means for 'low' vs 'high' wage categories is not equal to 0. 
+
+After performing a randomization test, the p-value obtained was 0, rejecting the null hypothesis. An independent-sample t test was also performed for comparison and the p-value obtained was 0, also rejecting the null hypothesis. This means that the average total revenue for the 'high' wage category does significantly differ from the 'low' wage category.
+```{r}
+ggplot(project1data,aes(Tot_Revenue,fill=wage_cat)) + geom_histogram() + facet_wrap(~wage_cat) + theme(legend.position="none") + scale_x_log10(labels=scales::number) + theme(axis.text.x=element_text(angle=90,hjust=1)) + xlab("Total Revenue ($)") + ggtitle(("Total Revenue by Wage Category"))
+
+data <- project1data %>% mutate(category=case_when(Effective.Min.Wage > 8 ~ "high", Effective.Min.Wage <= 8 ~ "low"))
+
+data %>% group_by(category) %>% summarize(means=mean(Tot_Revenue)) %>% summarize(mean_diff=diff(means))
+
+rand_dist <- vector()
+for(i in 1:5000){
+new <- data.frame(revenue=sample(data$Tot_Revenue),category=data$category)
+rand_dist[i]<-mean(new[new$category=="high",]$revenue) - mean(new[new$category=="low",]$revenue)}
+
+{hist(rand_dist,main="",ylab=""); abline(v = c(-6970418, 6970418),col="red")}
+mean(rand_dist>6970418 | rand_dist < -6970418)
+
+t.test(data=data,Tot_Revenue~category)
+```
+--
+
+Below I ran a linear regression model predicting minimum wage from student enrollment and total revenue, including their interaction. The intercept 5.963 is the predicted minimum wage for average student enrollment and total revenue. States with an average total revenue have a predicted minimum wage 0.003 less than those that don't have an average total revenue. States with an average student enrollment have a predicted minimum wage 0.001 greater than those that don't have an average student enrollment. The slope for student enrollment on minimum wage is theoretically not significantly different than the slope for total revenue on minimum wage. The proportion of the variation explained by the model is 0.253 (25.3%), which is not so great! Through the graph below, we can visualize that the linearity and homoskedasticity homoscedasticity assumptions are violated. By formally testing for normality we conclude that the normality assumption is violated as well. 
+
+After recomputing the regression results with robust standard errors, it can be seen that the standard errors slightly increase, with no change in the significant findings, although the p-value for the interaction does decrease and is closer to being significant.
+```{r}
+library(tidyverse)
+library(sandwich); library(lmtest)
+data$Enroll_c <- data$Enroll-mean(data$Enroll)
+data$Tot_Revenue_c <- data$Tot_Revenue-mean(data$Tot_Revenue)
+fit <- lm(Effective.Min.Wage ~ Enroll_c*Tot_Revenue_c, data=data)
+summary(fit)
+
+ggplot(data, aes(Enroll_c,Tot_Revenue_c)) + geom_smooth(method="lm",se=F) + geom_point()
+
+resids <- fit$residuals
+fitvals <- fit$fitted.values
+ggplot() + geom_point(aes(fitvals,resids)) + geom_hline(yintercept=0, col="red")
+ks.test(resids, "pnorm", mean=0, sd(resids))
+coeftest(fit, vcov=vcovHC(fit))
+```
+--
+
+After re-running the previous regression model, and computing bootstrapped standard errors, we can see an increase in all standard errors in comparison to both the original SEs, and robust SEs. This increase in standard errors signify more significant p-values.
+```{r}
+fit <- lm(Effective.Min.Wage ~ Enroll_c*Tot_Revenue_c, data=data)
+  residuals <- fit$residuals
+  fitted <- fit$fitted.values
+
+resid_resamp<-replicate(5000,{
+    new_resids<-sample(residuals,replace=TRUE) 
+    data$new_y<-fitted+new_resids
+    fit<-lm(new_y~Enroll_c*Tot_Revenue_c,data=data)
+    coef(fit)
+})
+
+resid_resamp%>%t%>%as.data.frame%>%summarize_all(sd)
+```
+--
+
+I ran a logistic regression model predicting the binary variable 'category', utilizing 'Tot_Revenue' and 'Percent' as explanatory variables. Percent is the proportion of total expenditure gone towards instructional expenditure. The predicted odds of being classified in the 'high' wage category is 0.011 when total revenue and percent are equal to 0. It was concluded that while controlling for 'Percent', for every 1-unit increase in 'Tot_Revenue', odds of being in the 'high' wage category change by a factor of 1.0 (they stay the same). Controlling for 'Tot_Revenue', for every 1-unit increase in 'Percent', odds of being in the 'high' wage category change by a factor of 1.027 (increase by 2.7%). 
+
+After setting up a confusion matrix we can see that the accuracy of the model is 0.939 (1127/1200), which is the proportion of correctly classified classes. The sensitivity (TPR) of the model is 0, because the model did not predict any 'high' wage categories. The specificity (TNR) of the model is 1, since it predicted all wage categories to be 'low'. The precision (PPV) of the model was not determined to be a real number because there weren't any predicted 'high' wage categories. The AUC of the model was 0.627 (62.7%), which quantifies how well we're predicting overall, and this value is considered to be poor. 
+
+Below I've provided the ROC plot and we can see how poor it is. The AUC is shown as 0.627 (62.7%), as previously stated, and we can infer that it's hard to predict 'high' wage categories from total revenue and expenditure percentage contributed towards instructional purposes.
+```{r}
+data <- data %>% mutate(y=ifelse(category=="high",1,0))
+fit <- glm(y~Tot_Revenue+Percent,data=data,family=binomial(link="logit"))
+coeftest(fit)
+exp(coef(fit))%>%round(3)%>%t
+
+probs<-predict(fit,type="response")
+table(predict=as.numeric(probs>.5),truth=data$y)%>%addmargins
+
+data$prob<-predict(fit,type="response")
+mean(data[data$y==1,]$prob>.5)
+mean(data[data$y==0,]$prob<.5)
+
+class_diag <- function(probs,truth){
+  #CONFUSION MATRIX: CALCULATE ACCURACY, TPR, TNR, PPV
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+  f1=2*(sens*ppv)/(sens+ppv)
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+  #CALCULATE EXACT AUC
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  TPR=cumsum(truth)/max(1,sum(truth))
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+  data.frame(acc,sens,spec,ppv,f1,auc)
+}
+class_diag(probs,data$y)
+
+data$logit <- predict(fit,type="link")
+data %>% ggplot() + geom_density(aes(logit,color=category,fill=category), alpha=.4) + theme(legend.position=c(.85,.85)) + geom_vline(xintercept=0) + xlab("logit (log-odds)")
+
+library(plotROC)
+ROCplot<-ggplot(data)+geom_roc(aes(d=y,m=prob), n.cuts=0)
+ROCplot
+calc_auc(ROCplot)
+```
+--
+
+Now I've run the previous model predicting the same binary response variable, but this time with all of the variables and their interactions. For accuracy we obtain an increase to 0.992 (99.2%), for sensitivity (TPR) a huge increase to 0.918 (91.8%), for specificity (TNR) 0.996 (99.6%), and for precision (PPV) a value of 0.944 (94.4%). Our model is now improved in classifying wage categories and correctly predicting 'high' wage categories. It stayed relatively the same in correctly classifying 'low' wage categories, and showed great improvement in classifying 'high' wage categories that actually are 'high' wage. For AUC we also see an improvement to 0.957 (95.7%) which is now considered great! This model is doing great predicting wage categories from all the variables and their interactions.
+
+After performing a 10-fold CV with the same model we observe further improvements in classification diagnostics except precision (PPV). For accuracy, sensitivity (TPR), specificity (TNR), and precision (PPV) we obtain the values 0.993, 0.95, 0.996, and 0.936, respectively. All of these values are great and our AUC is also further improved to 0.983 (98.3), so it's even better for predicting wage categories.
+```{r}
+data1 <- data%>%select(-STATE,-YEAR,-wage_cat,-category,-Enroll_c,-Tot_Revenue_c,-logit,-prob)
+fit1 <- glm(y~(.)^2, data=data1, family="binomial")
+prob<-predict(fit1,type="response")
+class_diag(prob,data1$y)
+
+set.seed(1234)
+k=10
+dataCV <- data1 %>% sample_frac
+folds <- ntile(1:nrow(dataCV),n=10)
+diags<-NULL
+for(i in 1:k){
+  train <- dataCV[folds!=i,]
+  test <- dataCV[folds==i,]
+  truth <- test$y
+  fit <- glm(y~(.)^2, data=train, family="binomial")
+  probs <- predict(fit, newdata=test, type="response")
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+summarize_all(diags,mean)
+```
+

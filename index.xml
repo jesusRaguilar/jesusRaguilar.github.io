@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jesus Aguilar</title>
+    <link>/</link>
+    <description>Recent content on Jesus Aguilar</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 23 Jul 2015 21:13:14 -0500</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hello R Markdown</title>
+      <link>/post/2015/07/23/hello-r-markdown/</link>
+      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      
+      <guid>/post/2015/07/23/hello-r-markdown/</guid>
+      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
+You can embed an R code chunk like this:
+summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
+    </item>
+    
+    <item>
+      <title>Exploratory Data Analysis</title>
+      <link>/project/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>The datasets ‘education’ and ‘wages’ were chosen for exploratory data analysis. The ‘education’ dataset contains a wide range of aspects for U.S. education (K-12) and finance mainly for the years 1992-2016, with our focus on revenue and expenditure. The ‘wages’ dataset contains minimum wages set by the states and the federal government for the years 1968-2020. After many hours of searching for data in the R datasets, I decided to turn to other sources.</description>
+    </item>
+    
+    <item>
+      <title>Modeling, Testing, and Predicting</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>The dataset “project1data” was derived from project 1 and we will be observing a subset of the original variables, a total of 9 variables and 1,200 observations. The dataset consists of student enrollment, revenue, expenditure, and minimum wage data across the 50 states of the U.S. through the years 1993-2016. There is also a ‘Percent’ variable which refers to the percent of expenditure contributed to instructional expenditure (educational purposes for grades K-12), and a ‘wage_cat’ variable which places the state in a low, intermediate, or high category based on that year’s minimum wage.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description> Check out some of my coding projects below:
+ Wrangling &amp;amp; Exploratory Data Analysis
+ Modeling, Inference, Prediction
+  -- </description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/resume/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>    </description>
+    </item>
+    
+  </channel>
+</rss>

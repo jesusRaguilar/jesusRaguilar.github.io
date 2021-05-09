@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Jesus Aguilar" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Modeling, Testing, and Predicting</title>
+    <meta name="generator" content="Hugo 0.83.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project2/">Modeling, Testing, and Predicting</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p>The dataset “project1data” was derived from project 1 and we will be observing a subset of the original variables, a total of 9 variables and 1,200 observations. The dataset consists of student enrollment, revenue, expenditure, and minimum wage data across the 50 states of the U.S. through the years 1993-2016. There is also a ‘Percent’ variable which refers to the percent of expenditure contributed to instructional expenditure (educational purposes for grades K-12), and a ‘wage_cat’ variable which places the state in a low, intermediate, or high category based on that year’s minimum wage. Low is anything below $7.25/hr, intermediate is greater than or equal to
+$7.25/hr but less than or equal to
+$8/hr, and high is anything greater than
+$8/hr.</p>
+<pre class="r"><code>project1data &lt;- read.csv(&quot;project1data.csv&quot;)
+project1data &lt;- project1data %&gt;% select(2:5,9:10,13:15)
+glimpse(project1data)</code></pre>
+<pre><code>## Rows: 1,200
+## Columns: 9
+## $ STATE &lt;fct&gt; Alabama, Alaska, Arizona, Arkansas,
+California, Colorado, Connecticut,…
+## $ YEAR &lt;int&gt; 1993, 1993, 1993, 1993, 1993, 1993, 1993,
+1993, 1993, 1993, 1993, 1993…
+## $ Enroll &lt;int&gt; 727716, 121156, 676297, 311432, 5129788,
+539538, 471918, 104355, 19805…
+## $ Tot_Revenue &lt;int&gt; 2827391, 1191398, 3427976, 1346909,
+28043338, 3058326, 4064158, 683954…
+## $ Tot_Expenditure &lt;int&gt; 2833433, 1126398, 3623946,
+1376067, 28110986, 3028305, 4079943, 694534…
+## $ Inst_Expenditure &lt;int&gt; 1564558, 494917, 1578889,
+782791, 15281147, 1537714, 2302852, 394680, …
+## $ Effective.Min.Wage &lt;dbl&gt; 4.25, 4.75, 4.25, 4.25, 4.25,
+4.25, 4.27, 4.25, 4.25, 4.25, 4.25, 4.25…
+## $ Percent &lt;dbl&gt; 55.21775, 43.93802, 43.56823, 56.88611,
+54.36005, 50.77804, 56.44324, …
+## $ wage_cat &lt;fct&gt; low, low, low, low, low, low, low, low,
+low, low, low, low, low, low, …</code></pre>
+<p>–</p>
+<p>The number of tests performed below were a total of 10. I did 1 MANOVA, 3 ANOVAs, and 6 t-tests. Since I conducted 10 tests, the probability of at least one type I error is 0.401 (40.1%). After adjusting the significance level accordingly, to keep the type I error rate at 0.05, I set the significance level to 0.005 (0.5%).</p>
+<p>The overall MANOVA was significant, so I performed one-way ANOVAs for each variable. The ANOVA for student enrollment was not significant, but for total revenue and instructional expenditure it was, signifying that at least one wage category differed. After performing t-tests for total revenue and instructional expenditure, a significant difference between high and low wage categories was observed, and between intermediate and low wage categories, for both total revenue and instructional expenditure. I did not find a significant difference in total revenue or instructional expenditure between high and intermediate categories, although their significance levels were borderline. These significant findings were found abiding by the corrected significance level of 0.005.</p>
+<p>Some MANOVA assumptions are that the observations are independent, random samples, and that there exists a linear relationship among the dependent variables. The random sample, independent observations assumption is not met as it’s known that each observation is specific to a state and year. The assumption of a linear relationship among dependent variables is harder to assess, but it’s likely that this assumption was met. For example, one could assume that as student enrollment increases, instructional expenditure has to increase. One could also assume that if total revenue increases for a state, then instructional expenditure also increases.</p>
+<pre class="r"><code>man &lt;- manova(cbind(Enroll,Tot_Revenue,Inst_Expenditure)~wage_cat, data=project1data)
+summary(man)</code></pre>
+<pre><code>## Df Pillai approx F num Df den Df Pr(&gt;F)
+## wage_cat 2 0.20278 44.981 6 2392 &lt; 2.2e-16 ***
+## Residuals 1197
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>summary.aov(man)</code></pre>
+<pre><code>## Response Enroll :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## wage_cat 2 2.2420e+12 1.1210e+12 0.9788 0.3761
+## Residuals 1197 1.3709e+15 1.1453e+12
+##
+## Response Tot_Revenue :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## wage_cat 2 6.7547e+15 3.3773e+15 24.461 3.872e-11 ***
+## Residuals 1197 1.6527e+17 1.3807e+14
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response Inst_Expenditure :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## wage_cat 2 1.8487e+15 9.2436e+14 23.276 1.211e-10 ***
+## Residuals 1197 4.7537e+16 3.9714e+13
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>pairwise.t.test(project1data$Tot_Revenue,project1data$wage_cat,p.adj=&quot;none&quot;)</code></pre>
+<pre><code>##
+## Pairwise comparisons using t tests with pooled SD
+##
+## data: project1data$Tot_Revenue and project1data$wage_cat
+##
+## high intermediate
+## intermediate 0.0059 -
+## low 2.4e-08 7.3e-07
+##
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(project1data$Inst_Expenditure,project1data$wage_cat,p.adj=&quot;none&quot;)</code></pre>
+<pre><code>##
+## Pairwise comparisons using t tests with pooled SD
+##
+## data: project1data$Inst_Expenditure and
+project1data$wage_cat
+##
+## high intermediate
+## intermediate 0.0053 -
+## low 3.6e-08 2.0e-06
+##
+## P value adjustment method: none</code></pre>
+<p>–</p>
+<p>Below we can see the distribution of total revenue by wage category. I decided to create a binary variable and merged the ‘intermediate’ and ‘low’ wage categories into one, classified as ‘low’, and made no changes to the ‘high’ wage category. ‘High’ is anything above $8/hr and ‘low’ is anything less than or equal to
+$8/hr.</p>
+<p>Next, the mean difference between the two categories was found to be
+$6,970,418. Thereafter a randomization test was performed. The null hypothesis was that the true difference in average total revenue is 0 for ‘low’ vs. ‘high’ wage categories. The alternative hypothesis was that the true difference in means for ‘low’ vs ‘high’ wage categories is not equal to 0.</p>
+<p>After performing a randomization test, the p-value obtained was 0, rejecting the null hypothesis. An independent-sample t test was also performed for comparison and the p-value obtained was 0, also rejecting the null hypothesis. This means that the average total revenue for the ‘high’ wage category does significantly differ from the ‘low’ wage category.</p>
+<pre class="r"><code>ggplot(project1data,aes(Tot_Revenue,fill=wage_cat)) + geom_histogram() + facet_wrap(~wage_cat) + theme(legend.position=&quot;none&quot;) + scale_x_log10(labels=scales::number) + theme(axis.text.x=element_text(angle=90,hjust=1)) + xlab(&quot;Total Revenue ($)&quot;) + ggtitle((&quot;Total Revenue by Wage Category&quot;))</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>data &lt;- project1data %&gt;% mutate(category=case_when(Effective.Min.Wage &gt; 8 ~ &quot;high&quot;, Effective.Min.Wage &lt;= 8 ~ &quot;low&quot;))
+
+data %&gt;% group_by(category) %&gt;% summarize(means=mean(Tot_Revenue)) %&gt;% summarize(mean_diff=diff(means))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   mean_diff
+##       &lt;dbl&gt;
+## 1 -6970418.</code></pre>
+<pre class="r"><code>rand_dist &lt;- vector()
+for(i in 1:5000){
+new &lt;- data.frame(revenue=sample(data$Tot_Revenue),category=data$category)
+rand_dist[i]&lt;-mean(new[new$category==&quot;high&quot;,]$revenue) - mean(new[new$category==&quot;low&quot;,]$revenue)}
+
+{hist(rand_dist,main=&quot;&quot;,ylab=&quot;&quot;); abline(v = c(-6970418, 6970418),col=&quot;red&quot;)}</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-3-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mean(rand_dist&gt;6970418 | rand_dist &lt; -6970418)</code></pre>
+<pre><code>## [1] 2e-04</code></pre>
+<pre class="r"><code>t.test(data=data,Tot_Revenue~category)</code></pre>
+<pre><code>##
+## Welch Two Sample t-test
+##
+## data: Tot_Revenue by category
+## t = 3.1664, df = 75.487, p-value = 0.002227
+## alternative hypothesis: true difference in means is not
+equal to 0
+## 95 percent confidence interval:
+## 2585597 11355239
+## sample estimates:
+## mean in group high mean in group low
+## 16002289 9031871</code></pre>
+<p>–</p>
+<p>Below I ran a linear regression model predicting minimum wage from student enrollment and total revenue, including their interaction. The intercept 5.963 is the predicted minimum wage for average student enrollment and total revenue. States with an average total revenue have a predicted minimum wage 0.003 less than those that don’t have an average total revenue. States with an average student enrollment have a predicted minimum wage 0.001 greater than those that don’t have an average student enrollment. The slope for student enrollment on minimum wage is theoretically not significantly different than the slope for total revenue on minimum wage. The proportion of the variation explained by the model is 0.253 (25.3%), which is not so great! Through the graph below, we can visualize that the linearity and homoskedasticity homoscedasticity assumptions are violated. By formally testing for normality we conclude that the normality assumption is violated as well.</p>
+<p>After recomputing the regression results with robust standard errors, it can be seen that the standard errors slightly increase, with no change in the significant findings, although the p-value for the interaction does decrease and is closer to being significant.</p>
+<pre class="r"><code>library(tidyverse)
+library(sandwich); library(lmtest)
+data$Enroll_c &lt;- data$Enroll-mean(data$Enroll)
+data$Tot_Revenue_c &lt;- data$Tot_Revenue-mean(data$Tot_Revenue)
+fit &lt;- lm(Effective.Min.Wage ~ Enroll_c*Tot_Revenue_c, data=data)
+summary(fit)</code></pre>
+<pre><code>##
+## Call:
+## lm(formula = Effective.Min.Wage ~ Enroll_c *
+Tot_Revenue_c, data = data)
+##
+## Residuals:
+## Min 1Q Median 3Q Max
+## -3.3134 -0.8082 -0.4227 1.1152 3.6250
+##
+## Coefficients:
+## Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 5.963e+00 3.724e-02 160.136 &lt;2e-16 ***
+## Enroll_c -1.346e-06 7.965e-08 -16.902 &lt;2e-16 ***
+## Tot_Revenue_c 1.336e-07 7.135e-09 18.720 &lt;2e-16 ***
+## Enroll_c:Tot_Revenue_c 2.138e-15 1.415e-15 1.511 0.131
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Residual standard error: 1.156 on 1196 degrees of
+freedom
+## Multiple R-squared: 0.255, Adjusted R-squared: 0.2532
+## F-statistic: 136.5 on 3 and 1196 DF, p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>ggplot(data, aes(Enroll_c,Tot_Revenue_c)) + geom_smooth(method=&quot;lm&quot;,se=F) + geom_point()</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>resids &lt;- fit$residuals
+fitvals &lt;- fit$fitted.values
+ggplot() + geom_point(aes(fitvals,resids)) + geom_hline(yintercept=0, col=&quot;red&quot;)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ks.test(resids, &quot;pnorm&quot;, mean=0, sd(resids))</code></pre>
+<pre><code>## 
+##  One-sample Kolmogorov-Smirnov test
+## 
+## data:  resids
+## D = 0.14691, p-value &lt; 2.2e-16
+## alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>coeftest(fit, vcov=vcovHC(fit))</code></pre>
+<pre><code>##
+## t test of coefficients:
+##
+## Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 5.9629e+00 3.6391e-02 163.8531 &lt; 2e-16 ***
+## Enroll_c -1.3463e-06 1.0759e-07 -12.5130 &lt; 2e-16 ***
+## Tot_Revenue_c 1.3357e-07 1.1938e-08 11.1885 &lt; 2e-16 ***
+## Enroll_c:Tot_Revenue_c 2.1375e-15 1.1362e-15 1.8813
+0.06018 .
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<p>–</p>
+<p>After re-running the previous regression model, and computing bootstrapped standard errors, we can see an increase in all standard errors in comparison to both the original SEs, and robust SEs. This increase in standard errors signify more significant p-values.</p>
+<pre class="r"><code>fit &lt;- lm(Effective.Min.Wage ~ Enroll_c*Tot_Revenue_c, data=data)
+  residuals &lt;- fit$residuals
+  fitted &lt;- fit$fitted.values
+
+resid_resamp&lt;-replicate(5000,{
+    new_resids&lt;-sample(residuals,replace=TRUE) 
+    data$new_y&lt;-fitted+new_resids
+    fit&lt;-lm(new_y~Enroll_c*Tot_Revenue_c,data=data)
+    coef(fit)
+})
+
+resid_resamp%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
+<pre><code>## (Intercept) Enroll_c Tot_Revenue_c
+Enroll_c:Tot_Revenue_c
+## 1 0.03703442 7.823657e-08 7.104028e-09 1.407356e-15</code></pre>
+<p>–</p>
+<p>I ran a logistic regression model predicting the binary variable ‘category’, utilizing ‘Tot_Revenue’ and ‘Percent’ as explanatory variables. Percent is the proportion of total expenditure gone towards instructional expenditure. The predicted odds of being classified in the ‘high’ wage category is 0.011 when total revenue and percent are equal to 0. It was concluded that while controlling for ‘Percent’, for every 1-unit increase in ‘Tot_Revenue’, odds of being in the ‘high’ wage category change by a factor of 1.0 (they stay the same). Controlling for ‘Tot_Revenue’, for every 1-unit increase in ‘Percent’, odds of being in the ‘high’ wage category change by a factor of 1.027 (increase by 2.7%).</p>
+<p>After setting up a confusion matrix we can see that the accuracy of the model is 0.939 (1127/1200), which is the proportion of correctly classified classes. The sensitivity (TPR) of the model is 0, because the model did not predict any ‘high’ wage categories. The specificity (TNR) of the model is 1, since it predicted all wage categories to be ‘low’. The precision (PPV) of the model was not determined to be a real number because there weren’t any predicted ‘high’ wage categories. The AUC of the model was 0.627 (62.7%), which quantifies how well we’re predicting overall, and this value is considered to be poor.</p>
+<p>Below I’ve provided the ROC plot and we can see how poor it is. The AUC is shown as 0.627 (62.7%), as previously stated, and we can infer that it’s hard to predict ‘high’ wage categories from total revenue and expenditure percentage contributed towards instructional purposes.</p>
+<pre class="r"><code>data &lt;- data %&gt;% mutate(y=ifelse(category==&quot;high&quot;,1,0))
+fit &lt;- glm(y~Tot_Revenue+Percent,data=data,family=binomial(link=&quot;logit&quot;))
+coeftest(fit)</code></pre>
+<pre><code>##
+## z test of coefficients:
+##
+## Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) -4.4945e+00 1.5455e+00 -2.9081 0.003636 **
+## Tot_Revenue 3.0702e-08 6.7986e-09 4.5159 6.304e-06 ***
+## Percent 2.6705e-02 2.9391e-02 0.9086 0.363569
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>exp(coef(fit))%&gt;%round(3)%&gt;%t</code></pre>
+<pre><code>##      (Intercept) Tot_Revenue Percent
+## [1,]       0.011           1   1.027</code></pre>
+<pre class="r"><code>probs&lt;-predict(fit,type=&quot;response&quot;)
+table(predict=as.numeric(probs&gt;.5),truth=data$y)%&gt;%addmargins</code></pre>
+<pre><code>##        truth
+## predict    0    1  Sum
+##     0   1127   73 1200
+##     Sum 1127   73 1200</code></pre>
+<pre class="r"><code>data$prob&lt;-predict(fit,type=&quot;response&quot;)
+mean(data[data$y==1,]$prob&gt;.5)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>mean(data[data$y==0,]$prob&lt;.5)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>class_diag &lt;- function(probs,truth){
+  #CONFUSION MATRIX: CALCULATE ACCURACY, TPR, TNR, PPV
+  tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+  f1=2*(sens*ppv)/(sens+ppv)
+  if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+  #CALCULATE EXACT AUC
+  ord&lt;-order(probs, decreasing=TRUE)
+  probs &lt;- probs[ord]; truth &lt;- truth[ord]
+  TPR=cumsum(truth)/max(1,sum(truth))
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+  TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+  n &lt;- length(TPR)
+  auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+  data.frame(acc,sens,spec,ppv,f1,auc)
+}
+class_diag(probs,data$y)</code></pre>
+<pre><code>##         acc sens spec ppv  f1      auc
+## 1 0.9391667    0    1 NaN NaN 0.627317</code></pre>
+<pre class="r"><code>data$logit &lt;- predict(fit,type=&quot;link&quot;)
+data %&gt;% ggplot() + geom_density(aes(logit,color=category,fill=category), alpha=.4) + theme(legend.position=c(.85,.85)) + geom_vline(xintercept=0) + xlab(&quot;logit (log-odds)&quot;)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-6-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(plotROC)
+ROCplot&lt;-ggplot(data)+geom_roc(aes(d=y,m=prob), n.cuts=0)
+ROCplot</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-6-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.6273231</code></pre>
+<p>–</p>
+<p>Now I’ve run the previous model predicting the same binary response variable, but this time with all of the variables and their interactions. For accuracy we obtain an increase to 0.992 (99.2%), for sensitivity (TPR) a huge increase to 0.918 (91.8%), for specificity (TNR) 0.996 (99.6%), and for precision (PPV) a value of 0.944 (94.4%). Our model is now improved in classifying wage categories and correctly predicting ‘high’ wage categories. It stayed relatively the same in correctly classifying ‘low’ wage categories, and showed great improvement in classifying ‘high’ wage categories that actually are ‘high’ wage. For AUC we also see an improvement to 0.957 (95.7%) which is now considered great! This model is doing great predicting wage categories from all the variables and their interactions.</p>
+<p>After performing a 10-fold CV with the same model we observe further improvements in classification diagnostics except precision (PPV). For accuracy, sensitivity (TPR), specificity (TNR), and precision (PPV) we obtain the values 0.993, 0.95, 0.996, and 0.936, respectively. All of these values are great and our AUC is also further improved to 0.983 (98.3), so it’s even better for predicting wage categories.</p>
+<pre class="r"><code>data1 &lt;- data%&gt;%select(-STATE,-YEAR,-wage_cat,-category,-Enroll_c,-Tot_Revenue_c,-logit,-prob)
+fit1 &lt;- glm(y~(.)^2, data=data1, family=&quot;binomial&quot;)
+prob&lt;-predict(fit1,type=&quot;response&quot;)
+class_diag(prob,data1$y)</code></pre>
+<pre><code>## acc sens spec ppv f1 auc
+## 1 0.9916667 0.9178082 0.9964508 0.943662 0.9305556
+0.9571295</code></pre>
+<pre class="r"><code>set.seed(1234)
+k=10
+dataCV &lt;- data1 %&gt;% sample_frac
+folds &lt;- ntile(1:nrow(dataCV),n=10)
+diags&lt;-NULL
+for(i in 1:k){
+  train &lt;- dataCV[folds!=i,]
+  test &lt;- dataCV[folds==i,]
+  truth &lt;- test$y
+  fit &lt;- glm(y~(.)^2, data=train, family=&quot;binomial&quot;)
+  probs &lt;- predict(fit, newdata=test, type=&quot;response&quot;)
+  diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+summarize_all(diags,mean)</code></pre>
+<pre><code>## acc sens spec ppv f1 auc
+## 1 0.9933333 0.9498077 0.9964311 0.9357143 0.9361758
+0.9831194</code></pre>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

@@ -1,0 +1,145 @@
+---
+title: "Exploratory Data Analysis"
+author: "Jesus Aguilar"
+date: "3/25/2021"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", 
+    warning = F, message = F, tidy = TRUE, tidy.opts = list(width.cutoff = 60), 
+    R.options = list(max.print = 100))
+```
+
+The datasets 'education' and 'wages' were chosen for exploratory data analysis. The 'education' dataset contains a wide range of aspects for U.S. education (K-12) and finance mainly for the years 1992-2016, with our focus on revenue and expenditure. The 'wages' dataset contains minimum wages set by the states and the federal government for the years 1968-2020. After many hours of searching for data in the R datasets, I decided to turn to other sources. These datasets were acquired through Kaggle briefly after filtering for datasets on the United States. I find them interesting because lately I've been hearing many petitions on raising the federal minimum wage to $15/hour, so I thought it'd be a worthwhile experience to explore minimum wage trends over the years. I also thought it'd be interesting to explore each state's total revenue and expenditure to gain insight on how much is being spent for instructional purposes. The main association I expect to see over the years is an increase in revenue, expenditure, expenditure for instructional purposes, and minimum wage.
+```{r}
+library(tidyverse)
+
+education <- read_csv("education.csv")
+glimpse(education)
+
+wages <- read.csv("wages.csv")
+glimpse(wages)
+```
+--
+
+Before I get into the type of join I performed, I'd like to share the process of how I prepared my 'education' dataset for an efficient join. The 'wages' dataset didn't need any changes. Both original datasets were already tidy, but the 'education' dataset was very tedious because all of the names under 'STATE' consisted of only uppercase letters with underscores (_) as spaces. I first removed all the underscores and then I changed the uppercase formatting to title formatting.
+
+Thereafter the type of join that I performed on my datasets, 'education' and 'wages', was an inner_join in order to only keep rows that had a match on the ID variables I joined by, which in this join were STATE and YEAR. In the dataset 'education' there were 1,715 observations and in the dataset 'wages' there were 2,862 observations. After the join there were only 1,650 observations total. The observations that were dropped in the 'education' dataset were those with 'District Of Columbia', 'National', and 'Dodea' in the 'STATE' column. The observations that were dropped in the 'wages' dataset were mostly those with '1968'-'1991' & '2017'-'2020' in the 'Year' column. Other observations dropped from the 'wages' dataset consisted of those with 'District of Columbia', 'Guam', 'Puerto Rico', and 'U.S. Virgin Islands' in the 'State' column. 
+
+After performing the inner_join, I dropped further observations by omitting all rows with NA values in the columns I was interested in. The total number of observations were reduced from 1,650 to 1,200. By chance, this actually enhanced the joined data, because now we have complete data for only the 50 states from the year of 1993 to 2016.
+
+Since our main focus throughout this data will be the 50 states of the U.S., there aren't many potential problems with the observations dropped. The only downside is that we won't be able to observe any relationships in the years 2017-2020 due to missing data for these years in the 'education' dataset.
+```{r}
+education <- education %>% mutate(STATE=str_replace(STATE,"_"," ")) %>% mutate(STATE=str_replace(STATE,"_"," ")) %>% mutate(STATE=str_to_title(STATE))
+
+joined_data <- inner_join(education, wages, by=c("STATE"="State", "YEAR"="Year"))
+glimpse(joined_data)
+
+missingrows_education <- anti_join(education, wages, by=c("STATE"="State", "YEAR"="Year")) 
+glimpse(missingrows_education)
+
+missingrows_wages <- anti_join(wages, education, by=c("State"="STATE", "Year"="YEAR")) 
+glimpse(missingrows_wages)
+
+joined_data <- joined_data %>% select(2:10,26,28,30) %>% na.omit()
+glimpse(joined_data)
+```
+--
+
+After generating summary statistics with various functions on the joined dataset, I came across some interesting results! Before any summary statistics, I created a new variable, 'percent', to obtain the percentage of total expenditure being spent for instructional purposes. Next I obtained mean, standard deviation, and max values for all numeric variables in the joined dataset. I won't go into specific details for these values but I've provided the results below. To improve our dataset, I created another new variable, 'wage_cat', to categorize minimum wage values. I decided to create 3 possible categories which are 'low', 'intermediate', and 'high'. Any minimum wage value below 7.25 is categorized as 'low', any value greater or equal to 7.25 and less than or equal to 8.0 is categorized as 'intermediate', and any value above 8.0 will be categorized as 'high'. I decided to go with these cutoffs since the current minimum wage is 7.25. After grouping by wage category, I obtained the minimum and average values for all numeric variables. Over the span of 1993-2016, the average total revenue across states in the 'intermediate' wage category was $11,799,719 and the average instructional expenditure was 
+$6,151,529. For the 'high' wage category, the average total revenue across states was 
+$16,002,289 and average instructional expenditure was 
+$8,434,674. This makes sense and we can infer that the average values for the 'low' wage category will be lower than both. 
+
+Further exploration consisted of grouping by state for the years 2010-2016, to obtain average values for all numeric variables based on more recent years. The state that averaged the highest percentage of their total expenditure towards instructional expenditure was New York with 63.6%. Regarding Texas, we do poorly in these terms with a rank of 48 out of 50 states with only 47.4% of our total expenditure going to instructional purposes. The state that averaged the highest total revenue was California with $73,721,341. Texas came in 3rd with an average of 
+$52,562,855. It's interesting that although we have a high average for total revenue, we are ranked 48th when it comes to how much of our expenditure goes to education. These results sparked my curiosity in California and Texas since it's widely known that many Californians have been migrating to Texas, so I generated a table with only values for these two states. Lastly, I grouped by both wage category and state to obtain a count of years in each category for each state. After reshaping, it's now clear how many years every state has been in each category.
+```{r}
+joined_data <- joined_data %>% mutate(percent=(INSTRUCTION_EXPENDITURE/TOTAL_EXPENDITURE)*100)
+
+joined_data %>% summarize_at(3:13, mean)
+joined_data %>% summarize_at(3:13, sd)
+joined_data %>% summarize_at(3:13, max)
+
+joined_data <- joined_data %>% mutate(wage_cat=case_when(Effective.Minimum.Wage > 8.0 ~ "high", Effective.Minimum.Wage <= 8.0 & 7.25 <= Effective.Minimum.Wage ~ "intermediate", Effective.Minimum.Wage < 7.25 ~ "low"))
+
+joined_data %>% group_by(wage_cat) %>% summarize_at(3:13, min)
+joined_data %>% group_by(wage_cat) %>% summarize_at(3:13, mean)
+
+joined_data %>% group_by(STATE) %>% filter(YEAR>="2010") %>% summarize_at(2:12, mean) %>% arrange(desc(percent))
+joined_data %>% group_by(STATE) %>% filter(YEAR>="2010") %>% summarize_at(2:12, mean) %>% arrange(desc(TOTAL_REVENUE))
+
+joined_data %>% filter(STATE=="Texas" | STATE=="California") %>% select(STATE, YEAR, TOTAL_REVENUE, TOTAL_EXPENDITURE, Effective.Minimum.Wage, percent)
+
+joined_data %>% group_by(wage_cat, STATE) %>% summarize(count=n()) %>% arrange(count)%>% pivot_wider(names_from="wage_cat",values_from="count")
+```
+--
+
+Through analysis of the correlation heatmap below, we can see many strong relationships between variables as well as some weak relationships. We can see that total revenue is strongly correlated with any source of revenue and expenditure. It's self-explanatory that the more revenue from different sources, the more total revenue, and according to the heatmap we can also expect a greater total expenditure and instructional expenditure. The weak relationships gather around the effective minimum wage and percentage of total expenditure spent for instructional purposes. This concludes that the effective minimum wage and percent spent on instruction are not dictated by any other variable.
+```{r}
+difnames_joined_data <- joined_data %>% rename("Enroll"=ENROLL, "Tot_Revenue"=TOTAL_REVENUE, "Fed_Revenue"=FEDERAL_REVENUE, "State_Revenue"=STATE_REVENUE,"Local_Revenue"=LOCAL_REVENUE, "Tot_Expenditure"=TOTAL_EXPENDITURE, "Inst_Expenditure"=INSTRUCTION_EXPENDITURE, "State.Min.Wage"=State.Minimum.Wage, "Fed.Min.Wage"=Federal.Minimum.Wage, "Effective.Min.Wage"=Effective.Minimum.Wage, "Percent"=percent)
+
+cormat <- difnames_joined_data %>% select(3:13) %>% cor(use="pair")
+
+tidycor <- cormat %>% as.data.frame %>% rownames_to_column("var1") %>% pivot_longer(-1, names_to="var2", values_to="correlation")
+
+tidycor %>% ggplot(aes(var1, var2, fill=correlation)) + geom_tile() + scale_fill_gradient2(low="yellow", high="red") + theme(axis.text.x = element_text(angle = 90, hjust=1)) + geom_text(aes(label=round(correlation,1))) + coord_fixed()
+```
+
+For the first graph below I decided to compare Texas with California across the years 1993-2016. We can see that California has always had a higher total revenue and that they reached the 'high' wage category, so higher than $8/hr, for 2014-2016. Is Texas ready for an increase in minimum wage to 
+$15/hr? That's quite an enormous jump. If we look closely, at a total revenue of 
+$50,000,000, California was still in the 'low' wage category, so less than 
+$7.25/hr. Once Texas reached a total revenue of 
+$50,000,000, the minimum wage was increased, placing us in the 'intermediate' category for 2010-2016.
+
+The second graph represents the the states in 2016 and displays the strong relationship shown in the previous correlation heatmap between total revenue and instructional expenditure. The more total revenue a state receives, the more amount of money that can be spent for instructinal purposes, but this doesn't signify that the percentage of total expenditure spent for instructional purposes will also increase. The percentage can remain the same, increase, or decrease. This graph also shows that minimum wage is not correlated to either variable since there are states in both wage categories found at both ends.
+
+The third graph shows each state's average total revenue for the years 1993-2016. It also shows roughly a proportion of the years spent in each wage category. This graph is interesting because it displays the states with higher revenue clearly. We can observe that the top states are California, New York, Texas, and New Jersey. Out of the top 4 states leading in total revenue, Texas is the only state that has not been in the "high' wage category. Perhaps there should be an increase in minimum wage, but to $15/hour might be a ridiculous jump. 
+```{r}
+info_2016 <- difnames_joined_data %>% group_by(STATE) %>% filter(YEAR=="2016")
+
+texasvscali <- difnames_joined_data %>% filter(STATE=="Texas" | STATE=="California")
+
+ggplot(texasvscali, aes(x=YEAR,y=Tot_Revenue)) +
+  geom_point(size=2, aes(color=wage_cat)) + geom_line(aes(group=STATE, linetype=STATE))+ ggtitle("Total Revenue by Year for Texas & California") + ylab("Total Revenue ($)") + xlab("Year") + theme_minimal() + scale_y_log10(labels=scales::number) + scale_x_continuous(n.breaks=8) 
+
+ggplot(info_2016, aes(x=Tot_Revenue,y=Inst_Expenditure)) + geom_point(size=1, aes(color=wage_cat)) + ggtitle("Instructional Expenditure & Total Revenue") + ylab("Expenditure ($)") + xlab("Revenue ($)") + theme(legend.position=c(.9,.3)) + scale_x_log10(labels=scales::number) + scale_y_log10(labels=scales::number)
+
+ggplot(difnames_joined_data, aes(x=STATE, y=Tot_Revenue, fill=wage_cat)) + geom_bar(stat="summary", fun=mean) + ggtitle("Total Revenue Average by State") + ylab("Mean Revenue ($)") + xlab("State") + theme(axis.text.x = element_text(angle=90, hjust=1)) + scale_fill_brewer(palette="Reds")
+```
+
+--
+
+{Preparing the Data}
+The first step for Principal Component Analysis (PCA) is to prepare the data. My data was already tidy so I simply chose all the numeric variables and then piped them into scale, which basically divides by the standard deviation.
+```{r}
+prepared_data <- difnames_joined_data %>% select(3:13) %>% scale
+```
+
+{Performing PCA}
+The second step is to carry out the Principal Component Analysis on the prepared data.
+```{r}
+PCAdata<-princomp(prepared_data)
+```
+
+{Choosing Number of Principal Components}
+The next step is choosing the number of PCs. There are various ways to choose number of PCs, but I chose based on cumulative proportion. I essentially picked PCs until cumulative proportion of variance was greater than 80%. In order to achieve this I just needed PC1 and PC2.
+```{r}
+summary(PCAdata, loadings=T)
+```
+
+{Compute/Grab PC Scores}
+Next we just have to compute/grab the new PC scores, which are the new coordinates for each observation on PC1 & PC2.
+```{r}
+PCAdf<-data.frame(PC1=PCAdata$scores[, 1],PC2=PCAdata$scores[, 2])
+glimpse(PCAdf)
+```
+
+{Visualization & Interpretation}
+The last step is plotting the new coordinates/PC scores. For PC1, all loadings are positive and similar in magnitude. PC1 is like an overall strength axis because it seems to be an indicator of how big the values are for each variable. The higher the score on PC1, the higher the values across all variables for that state and year. PC2 is an Enrollment vs. Minimum Wage Axis and is not correlated to PC1. I find this very thought-provoking because I did not explore much into enrollment values. The 'Enroll' variable was the U.S. Census Bureau's Count for students in the state. Essentially, the higher scores on PC2 mean a higher enrollment of students but a lower minimum wage for that state and year. Lower scores on PC2 mean a lower enrollment of students but a higher minimum wage. A big component we have to consider is that our data consists of years 1993-2016. The much earlier years had a lower minimum wage and there were probably less number of students because of a smaller population size. Over the span of those years the population has increased much more than the minimum wage. 
+```{r}
+ggplot(PCAdf, aes(PC1, PC2)) + geom_point()
+```
+
