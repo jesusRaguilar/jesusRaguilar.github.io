@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Jesus Aguilar" />
     
-    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
     <title>Modeling, Testing, and Predicting</title>
     <meta name="generator" content="Hugo 0.83.1" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
     
@@ -28,7 +28,7 @@
       <nav class="navbar navbar-default">
   <div class="container">
     <div class="navbar-header">
-      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -39,11 +39,11 @@
       <ul class="nav navbar-nav navbar-right">
       
         
-        <li><a href="/post/">BLOG</a></li>
+        <li><a href="../../post/">BLOG</a></li>
         
-        <li><a href="/projects/">PROJECTS</a></li>
+        <li><a href="../../projects/">PROJECTS</a></li>
         
-        <li><a href="/resume/">RESUME</a></li>
+        <li><a href="../../resume/">RESUME</a></li>
         
       
       </ul>
@@ -54,7 +54,7 @@
       <div class="container">
         <div class="blog-post">
           <h3>
-            <strong><a href="/project/project2/">Modeling, Testing, and Predicting</a></strong>
+            <strong><a href="../../project/project2/">Modeling, Testing, and Predicting</a></strong>
           </h3>
         </div>
  
@@ -162,7 +162,7 @@ $8/hr.</p>
 $6,970,418. Thereafter a randomization test was performed. The null hypothesis was that the true difference in average total revenue is 0 for ‘low’ vs. ‘high’ wage categories. The alternative hypothesis was that the true difference in means for ‘low’ vs ‘high’ wage categories is not equal to 0.</p>
 <p>After performing a randomization test, the p-value obtained was 0, rejecting the null hypothesis. An independent-sample t test was also performed for comparison and the p-value obtained was 0, also rejecting the null hypothesis. This means that the average total revenue for the ‘high’ wage category does significantly differ from the ‘low’ wage category.</p>
 <pre class="r"><code>ggplot(project1data,aes(Tot_Revenue,fill=wage_cat)) + geom_histogram() + facet_wrap(~wage_cat) + theme(legend.position=&quot;none&quot;) + scale_x_log10(labels=scales::number) + theme(axis.text.x=element_text(angle=90,hjust=1)) + xlab(&quot;Total Revenue ($)&quot;) + ggtitle((&quot;Total Revenue by Wage Category&quot;))</code></pre>
-<p><img src="/project/project2_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>data &lt;- project1data %&gt;% mutate(category=case_when(Effective.Min.Wage &gt; 8 ~ &quot;high&quot;, Effective.Min.Wage &lt;= 8 ~ &quot;low&quot;))
 
 data %&gt;% group_by(category) %&gt;% summarize(means=mean(Tot_Revenue)) %&gt;% summarize(mean_diff=diff(means))</code></pre>
@@ -176,7 +176,7 @@ new &lt;- data.frame(revenue=sample(data$Tot_Revenue),category=data$category)
 rand_dist[i]&lt;-mean(new[new$category==&quot;high&quot;,]$revenue) - mean(new[new$category==&quot;low&quot;,]$revenue)}
 
 {hist(rand_dist,main=&quot;&quot;,ylab=&quot;&quot;); abline(v = c(-6970418, 6970418),col=&quot;red&quot;)}</code></pre>
-<p><img src="/project/project2_files/figure-html/unnamed-chunk-3-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-3-2.png" width="768" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>mean(rand_dist&gt;6970418 | rand_dist &lt; -6970418)</code></pre>
 <pre><code>## [1] 0</code></pre>
 <pre class="r"><code>t.test(data=data,Tot_Revenue~category)</code></pre>
@@ -225,11 +225,11 @@ freedom
 ## Multiple R-squared: 0.255, Adjusted R-squared: 0.2532
 ## F-statistic: 136.5 on 3 and 1196 DF, p-value: &lt; 2.2e-16</code></pre>
 <pre class="r"><code>ggplot(data, aes(Enroll_c,Tot_Revenue_c)) + geom_smooth(method=&quot;lm&quot;,se=F) + geom_point()</code></pre>
-<p><img src="/project/project2_files/figure-html/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>resids &lt;- fit$residuals
 fitvals &lt;- fit$fitted.values
 ggplot() + geom_point(aes(fitvals,resids)) + geom_hline(yintercept=0, col=&quot;red&quot;)</code></pre>
-<p><img src="/project/project2_files/figure-html/unnamed-chunk-4-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-2.png" width="768" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>ks.test(resids, &quot;pnorm&quot;, mean=0, sd(resids))</code></pre>
 <pre><code>## 
 ##  One-sample Kolmogorov-Smirnov test
@@ -323,11 +323,11 @@ class_diag(probs,data$y)</code></pre>
 ## 1 0.9391667    0    1 NaN NaN 0.627317</code></pre>
 <pre class="r"><code>data$logit &lt;- predict(fit,type=&quot;link&quot;)
 data %&gt;% ggplot() + geom_density(aes(logit,color=category,fill=category), alpha=.4) + theme(legend.position=c(.85,.85)) + geom_vline(xintercept=0) + xlab(&quot;logit (log-odds)&quot;)</code></pre>
-<p><img src="/project/project2_files/figure-html/unnamed-chunk-6-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-6-1.png" width="768" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>library(plotROC)
 ROCplot&lt;-ggplot(data)+geom_roc(aes(d=y,m=prob), n.cuts=0)
 ROCplot</code></pre>
-<p><img src="/project/project2_files/figure-html/unnamed-chunk-6-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-6-2.png" width="768" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>calc_auc(ROCplot)</code></pre>
 <pre><code>##   PANEL group       AUC
 ## 1     1    -1 0.6273231</code></pre>
@@ -405,10 +405,10 @@ summarize_all(diags,mean)</code></pre>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="/js/docs.min.js"></script>
-<script src="/js/main.js"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
 
-<script src="/js/ie10-viewport-bug-workaround.js"></script>
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
 
 
     
