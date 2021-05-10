@@ -5,15 +5,14 @@
     <link>/post/</link>
     <description>Recent content in Posts on Jesus Aguilar</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-US</language>
-    <lastBuildDate>Sun, 09 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-US</language><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>R &amp; Python Working Together</title>
-      <link>/post/2021/05/09/new/</link>
-      <pubDate>Sun, 09 May 2021 00:00:00 +0000</pubDate>
+      <link>/post/1/01/01/r-python-working-together/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/post/2021/05/09/new/</guid>
-      <description> There’s currently a hot debate in the world of coding today, and that is, which programming language is better, R or Python? library(reticulate)  </description>
+      <guid>/post/1/01/01/r-python-working-together/</guid>
+      <description>There’s currently a hot debate in the world of coding today, and that is, which programming language is better, R or Python? Well something that can be agreed upon is that a bilingual person has a greater advantage over a monolingual speaker. So why not learn both programming languages if possible? Knowing both R and Python will give you a great advantage when trying to land a job. People often communicate using two languages and one can do exactly that with R and Python using the reticulate package.</description>
     </item>
     
   </channel>
