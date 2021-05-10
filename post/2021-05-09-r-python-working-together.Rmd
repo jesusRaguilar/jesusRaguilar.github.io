@@ -8,13 +8,22 @@ categories = []
 
 There's currently a hot debate in the world of coding today, and that is, which programming language is better, R or Python? 
 
-Well something that can be agreed upon is that a bilingual person has a greater advantage over a monolingual speaker. So why not learn both if possible? Knowing both R and Python will give you a great advantage when trying to land a job. People often communicate using two languages and one can do exactly that with R and Python using the reticulate package.
+Well something that can be agreed upon is that a bilingual person has a greater advantage over a monolingual speaker. So why not learn both programming languages if possible? Knowing both R and Python will give you a great advantage when trying to land a job. People often communicate using two languages and one can do exactly that with R and Python using the reticulate package. Don't believe me? Take a look!
+
 ```{r}
 library(reticulate)
-
+hey <- "lets"
+how <- "create" 
+are <- "secret"
+you <- "code"
 ```
 
 ```{python}
-
+the="so"
+reports="we"
+are="arent"
+done="discovered"
+print(r.hey,r.how,r.are,r.you,the,reports,are,done)
 ```
 
+As shown above, R and Python can be intertwined together and this is just a basic example. Whether it's for top secretive agencies or other corporations, there are a multitude of tasks made possible using R and Python simultaneously. Time consuming and tedious it might be, but definitely worth the try!
