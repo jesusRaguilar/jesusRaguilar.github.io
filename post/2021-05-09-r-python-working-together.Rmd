@@ -1,9 +1,11 @@
 ---
 title: "R & Python Working Together"
-output: html_document
-hidedate: true
-hiderelated: true
-hidediscus: true
+author: "Jesus Aguilar"
+date: '2021-05-09'
+slug: 
+categories: []
+tags: []
+description: ''
 ---
 
 There's currently a hot debate in the world of coding today, and that is, which programming language is better, R or Python?
